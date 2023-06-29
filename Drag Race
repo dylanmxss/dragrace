@@ -1,0 +1,60 @@
+class Contestant:
+    def __init__(self, name, season):
+        self.name = name
+        self.season = season
+
+class Season:
+    def __init__(self, name, contestants):
+        self.name = name
+        self.contestants = contestants
+
+class DragRaceGame:
+    def __init__(self):
+        self.seasons = []
+        self.current_season = None
+
+    def add_season(self, season):
+        self.seasons.append(season)
+
+    def start_season(self, season_name):
+        for season in self.seasons:
+            if season.name == season_name:
+                self.current_season = season
+                print(f"Starting {self.current_season.name}...")
+                break
+        else:
+            print(f"Season {season_name} not found.")
+
+    def list_contestants(self):
+        if self.current_season:
+            print(f"Contestants in {self.current_season.name}:")
+            for contestant in self.current_season.contestants:
+                print(contestant.name)
+        else:
+            print("No season currently in progress.")
+
+# Create seasons
+season1_contestants = [
+    Contestant("Contestant 1", "Season 1"),
+    Contestant("Contestant 2", "Season 1"),
+    Contestant("Contestant 3", "Season 1"),
+    # Add more contestants as needed
+]
+season1 = Season("Season 1", season1_contestants)
+
+season2_contestants = [
+    Contestant("Contestant 1", "Season 2"),
+    Contestant("Contestant 2", "Season 2"),
+    Contestant("Contestant 3", "Season 2"),
+    # Add more contestants as needed
+]
+season2 = Season("Season 2", season2_contestants)
+
+# Create game and add seasons
+game = DragRaceGame()
+game.add_season(season1)
+game.add_season(season2)
+
+# Start a season and list the contestants
+game.start_season("Season 1")
+game.list_contestants()
