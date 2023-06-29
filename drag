@@ -1,0 +1,106 @@
+import json
+
+class Contestant:
+    def __init__(self, name, season):
+        self.name = name
+        self.season = season
+
+    def to_dict(self):
+        return {
+            "name": self.name,
+            "season": self.season
+        }
+
+    @classmethod
+    def from_dict(cls, data):
+        return cls(data["name"], data["season"])
+
+class Season:
+    def __init__(self, name, contestants):
+        self.name = name
+        self.contestants = contestants
+
+    def to_dict(self):
+        return {
+            "name": self.name,
+            "contestants": [contestant.to_dict() for contestant in self.contestants]
+        }
+
+    @classmethod
+    def from_dict(cls, data):
+        contestants = [Contestant.from_dict(c) for c in data["contestants"]]
+        return cls(data["name"], contestants)
+
+class DragRaceGame:
+    def __init__(self):
+        self.seasons = []
+        self.current_season = None
+
+    def add_season(self, season):
+        self.seasons.append(season)
+
+    def start_season(self, season_name):
+        for season in self.seasons:
+            if season.name == season_name:
+                self.current_season = season
+                print(f"Starting {self.current_season.name}...")
+                break
+        else:
+            print(f"Season {season_name} not found.")
+
+    def list_contestants(self):
+        if self.current_season:
+            print(f"Contestants in {self.current_season.name}:")
+            for contestant in self.current_season.contestants:
+                print(contestant.name)
+        else:
+            print("No season currently in progress.")
+
+    def to_dict(self):
+        return {
+            "seasons": [season.to_dict() for season in self.seasons],
+            "current_season": self.current_season.to_dict() if self.current_season else None
+        }
+
+    @classmethod
+    def from_dict(cls, data):
+        seasons = [Season.from_dict(s) for s in data["seasons"]]
+        current_season = Season.from_dict(data["current_season"]) if data["current_season"] else None
+        game = cls()
+        game.seasons = seasons
+        game.current_season = current_season
+        return game
+
+# Create seasons
+season1_contestants = [
+    Contestant("Contestant 1", "Season 1"),
+    Contestant("Contestant 2", "Season 1"),
+    Contestant("Contestant 3", "Season 1"),
+    # Add more contestants as needed
+]
+season1 = Season("Season 1", season1_contestants)
+
+season2_contestants = [
+    Contestant("Contestant 1", "Season 2"),
+    Contestant("Contestant 2", "Season 2"),
+    Contestant("Contestant 3", "Season 2"),
+    # Add more contestants as needed
+]
+season2 = Season("Season 2", season2_contestants)
+
+# Create game and add seasons
+game = DragRaceGame()
+game.add_season(season1)
+game.add_season(season2)
+
+# Start a season and list the contestants
+game.start_season("Season 1")
+game.list_contestants()
+
+# Convert game data to JSON
+game_data = game.to_dict()
+json_data = json.dumps(game_data, indent=4)
+
+# Save JSON data to a file
+with open("game_data.json", "w") as file:
+    file.write(json_data)
